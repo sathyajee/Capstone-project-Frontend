@@ -80,7 +80,60 @@ function Retrieve() {
   const [UID, setUID] = useState('')
   const Navigate = useNavigate();
 
-
+  const contractAddress = '0x65ef37C94424847113500D5bC6E4821699bE9a07'; // Replace with your actual contract address
+	const abi = [
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "cid",
+          "type": "string"
+        }
+      ],
+      "name": "storePerson",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "ind",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getIndex",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "i",
+          "type": "uint256"
+        }
+      ],
+      "name": "getPerson",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "cid",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ];
   const handleChange = (e) => {
     const { name, value } = e.target;
     // Validate id field
@@ -116,7 +169,7 @@ function Retrieve() {
     //   setFoundPdf(null);
     // }
     await RetrieveWill(file,formData,setUID,setFormData,setFile);
-
+    // have to try this one let ecidstr=await contract.getPerson(UID)
     console.log(formData);
     console.log(UID);
     console.log(file);
