@@ -182,7 +182,8 @@ let Index;
     await UpdateIndex(UID, Index);
     // setEncid("3");
     // setUID("2");
-    console.log(Index);
+    //console.log(Index);
+    console.log(index)
     console.log(Encid);
     // Redirect to the Retrieve page with the form data in the state
     Navigate('/download-keys', { state: { UIDc : UID } });
