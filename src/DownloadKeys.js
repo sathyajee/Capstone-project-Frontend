@@ -1,6 +1,6 @@
-import React from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { downloadCreatorKey, downloadNomineeKey } from './utils/Handleapi';
+import React from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { downloadCreatorKey, downloadNomineeKey } from "./utils/Handleapi";
 //import './DownloadKeys.css';
 
 function DownloadKeys() {
@@ -13,8 +13,8 @@ function DownloadKeys() {
     await downloadCreatorKey(UIDc);
     await downloadNomineeKey(UIDc);
     // Navigate('/retrieve');
-    Navigate('/app');
-    console.log(UIDc);
+    Navigate("/app");
+    // console.log(UIDc);
   };
 
   const handleDownloadNomineeKey = () => {
@@ -22,7 +22,7 @@ function DownloadKeys() {
     console.log("Downloading nominee's private key");
 
     // Redirect to the AddUser page after both keys are downloaded
-    Navigate('/retrieve');
+    Navigate("/retrieve");
   };
 
   return (

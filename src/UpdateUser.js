@@ -1,7 +1,12 @@
-import React, { useState } from 'react';
-import './App.css';
-import { UpdateWill, UpdateWillPrivateKey } from './utils/Handleapi';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import "./App.css";
+import {
+  UpdateWill,
+  UpdateWillPrivateKey,
+  UpdateIndex,
+} from "./utils/Handleapi";
+import { useNavigate } from "react-router-dom";
+import { ethers, providers } from "ethers";
 //import './AddUser.css';
 
 function UpdateUser() {
@@ -30,45 +35,117 @@ function UpdateUser() {
   const handleFile2Change = (e) => {
     const file = e.target.files[0];
     setFile2(file);
-
   };
 
-  // const handleAddNominee = () => {
-  //   // Check if there is no nominee or only one nominee
-  //   if (formData.nomineeList.length < 2) {
-  //     setFormData({
-  //       ...formData,
-  //       nomineeList: [...formData.nomineeList, { nomineeName: '', nomineeId: '' }],
-  //     });
-  //   }
-  // };
+  const contractAddress = "0x65ef37C94424847113500D5bC6E4821699bE9a07"; // Replace with your actual contract address
+  const abi = [
+    {
+      inputs: [
+        {
+          internalType: "string",
+          name: "cid",
+          type: "string",
+        },
+      ],
+      name: "storePerson",
+      outputs: [
+        {
+          internalType: "uint256",
+          name: "ind",
+          type: "uint256",
+        },
+      ],
+      stateMutability: "nonpayable",
+      type: "function",
+    },
+    {
+      inputs: [],
+      name: "getIndex",
+      outputs: [
+        {
+          internalType: "uint256",
+          name: "",
+          type: "uint256",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "uint256",
+          name: "i",
+          type: "uint256",
+        },
+      ],
+      name: "getPerson",
+      outputs: [
+        {
+          internalType: "string",
+          name: "cid",
+          type: "string",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+  ];
+  const provider = new ethers.providers.Web3Provider(window.ethereum, "goerli");
+  let contract;
+  let signer;
+  provider.send("eth_requestAccounts", []).then(() => {
+    provider.listAccounts().then(function (accounts) {
+      signer = provider.getSigner(accounts[0]);
+      contract = new ethers.Contract(contractAddress, abi, signer);
+    });
+  });
 
-  // const handleDeleteNominee = (index) => {
-  //   const updatedNominees = [...formData.nomineeList];
-  //   updatedNominees.splice(index, 1);
-  //   setFormData({
-  //     ...formData,
-  //     nomineeList: updatedNominees,
-  //   });
-  // };
+  // const [index,setIndex]=useState("");
 
-  // const handleNomineeChange = (index, e) => {
-  //   const { name, value } = e.target;
-  //   const updatedNominees = [...formData.nomineeList];
-  //   updatedNominees[index][name] = value;
-  //   setFormData({
-  //     ...formData,
-  //     nomineeList: updatedNominees,
-  //   });
-  // };
+  const handleStorePerson = async (EncCid) => {
+    // console.log(EncCid);
+    //backend func
+    //setCid(ecid);
+    const createPerson = await contract.storePerson(EncCid);
+    const i = await contract.getIndex();
+    // setIndex(parseInt(i._hex,16));
+    //func to send index to the backend;
+    // console.log(createPerson);
+    return i;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     // Handle form submission, you can send the data to your server or perform any other action.
-    console.log(formData);
-    await UpdateWillPrivateKey(file1,setFile1);
-    await UpdateWill(file2,setFile2,formData,setFormData);
-    Navigate('/app');
+    // console.log(formData);
+    let UID = formData.UIDc;
+    if (formData.UIDc.length != 12) {
+      alert("Creator UIDc should be exactly 12 Integers long");
+      return;
+    } else if (formData.password.length < 8) {
+      alert("Password should be atleast 8 characters");
+      return;
+    } else {
+      await UpdateWillPrivateKey(file1, setFile1);
+      const reply = await UpdateWill(file2, setFile2, formData, setFormData);
+      // console.log(`reply->`, reply);
+      if (reply === "No Data") {
+        alert(
+          "You have no data to update the Will, Upload your will as a new User"
+        );
+        Navigate("/add-user");
+      } else if (reply === "Wrong Password") {
+        alert("Incorrect Password, Retry again");
+        Navigate("/update-user");
+      } else {
+        alert("File added successfully");
+        const Index = await handleStorePerson(reply);
+        const newIndex = parseInt(Index._hex, 16);
+        await UpdateIndex(UID, newIndex);
+        Navigate("/app");
+      }
+    }
   };
 
   return (
@@ -77,49 +154,49 @@ function UpdateUser() {
       <form onSubmit={handleSubmit}>
         <div>
           <label>Name:</label>
-          <input type="text" name="Name" value={formData.Name} onChange={handleChange} />
+          <input
+            type="text"
+            name="Name"
+            value={formData.Name}
+            onChange={handleChange}
+          />
         </div>
         <div>
           <label>UIDc:</label>
-          <input type="text" name="UIDc" value={formData.UIDc} onChange={handleChange} />
+          <input
+            type="number"
+            name="UIDc"
+            value={formData.UIDc}
+            onChange={handleChange}
+          />
         </div>
         <div>
           <label>Upload CreatorKey File:</label>
-          <input type="file" accept=".pdf" name="createfile" onChange={handleFile1Change} />
+          <input
+            type="file"
+            accept=".pdf"
+            name="createfile"
+            onChange={handleFile1Change}
+          />
+        </div>
+        <div>
+          <label>Password of the Document:</label>
+          <input
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+          />
         </div>
         <div>
           <label>Upload New Will File:</label>
-          <input type="file" accept=".pdf" name="willfile" onChange={handleFile2Change} />
+          <input
+            type="file"
+            accept=".pdf"
+            name="willfile"
+            onChange={handleFile2Change}
+          />
         </div>
-        {/* <div>
-          <h3>Nominee List</h3>
-          {formData.nomineeList.map((nominee, index) => (
-            <div key={index}>
-              <label>Nominee Name:</label>
-              <input
-                type="text"
-                name="nomineeName"
-                value={nominee.nomineeName}
-                onChange={(e) => handleNomineeChange(index, e)}
-              />
-              <label>Nominee ID:</label>
-              <input
-                type="text"
-                name="nomineeId"
-                value={nominee.nomineeId}
-                onChange={(e) => handleNomineeChange(index, e)}
-              />
-              <button type="button" onClick={() => handleDeleteNominee(index)}>
-                Delete Nominee
-              </button>
-            </div>
-          ))}
-          {formData.nomineeList.length < 2 && (
-            <button type="button" onClick={handleAddNominee}>
-              Add Nominee
-            </button>
-          )}
-        </div> */}
         <button type="submit">Update User</button>
       </form>
     </div>
