@@ -28,7 +28,8 @@ const createWill = async (
   fillForm.append("Name", formData.Name);
   fillForm.append("UIDc", formData.UIDc);
   fillForm.append("UIDn", formData.UIDn);
-  fillForm.append("password", formData.password);
+  fillForm.append("passwordc", formData.passwordc);
+  fillForm.append("passwordn", formData.passwordn);
   let response;
   await axios
     .post(`${baseUrl}/createWill`, fillForm)
@@ -47,7 +48,10 @@ const createWill = async (
           UIDc: "",
           nomanieeName: "",
           UIDn: "",
-          password: "",
+          passwordc: "",
+          passwordn: "",
+          CreconfirmPassword: "",
+          NomconfirmPassword: "",
         });
         setFile(null);
       } else {
@@ -131,6 +135,7 @@ const RetrieveWill = async (file, formData, setUID, setFormData, setFile) => {
   // fillForm.append('Name',formData.Name);
   fillForm.append("UIDc", formData.UIDc);
   fillForm.append("UIDn", formData.UIDn);
+  fillForm.append("password", formData.password);
   let response;
   await axios
     .post(`${baseUrl}/retriveWill`, fillForm)
@@ -140,6 +145,8 @@ const RetrieveWill = async (file, formData, setUID, setFormData, setFile) => {
         response = "No Data";
       } else if (data.data.Message === "UIDn not matching") {
         response = "Wrong UIDn";
+      } else if (data.data.Message === "Wrong Password") {
+        response = "Wrong Password";
       } else if (data.data.Message === "File retrived") {
         response = data.data.fileName;
         // setEncid(i);
@@ -147,6 +154,7 @@ const RetrieveWill = async (file, formData, setUID, setFormData, setFile) => {
         setFormData({
           UIDc: "",
           UIDn: "",
+          password: "",
         });
         setFile(null);
       }
@@ -199,8 +207,7 @@ const UpdateWill = async (file, setFile2, formData, setFormData) => {
   fillForm.append("password", formData.password);
   let reply;
   await axios.post(`${baseUrl}/Update-will`, fillForm).then((data) => {
-    setFile2(null);
-    setFormData({});
+    // setFormData({});
     // console.log(`data-->`, data);
     if (data.data.Message === "ha ha ha first create to update") {
       reply = "No Data";
@@ -210,6 +217,12 @@ const UpdateWill = async (file, setFile2, formData, setFormData) => {
       data.data.Message === "Deleted old file successfully and uploded new..."
     ) {
       reply = data.data.Enccid;
+      setFormData({
+        Name: "",
+        UIDc: "",
+        password: "",
+      });
+      setFile2(null);
     }
   });
   // console.log(`check reply`, reply);

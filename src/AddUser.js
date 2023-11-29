@@ -185,8 +185,17 @@ function AddUser() {
       // console.log(formData.password.length > 7);
       alert("Creator and Nominee ID should be different");
       return;
-    } else if (formData.password.length < 8) {
-      alert("Password should be atleast 8 characters");
+    } else if (formData.passwordc.length < 8 || formData.passwordn.length < 8) {
+      alert("Both password should be atleast 8 characters");
+      return;
+    } else if (formData.passwordc === formData.passwordn) {
+      alert("Creator and Nominee password should be different");
+      return; // Stop the submission if names are the same
+    } else if (formData.passwordc != formData.CreconfirmPassword) {
+      alert("Password and Confirm Password do not match for Creator");
+      return;
+    } else if (formData.passwordn != formData.NomconfirmPassword) {
+      alert("Password and Confirm Password do not match for Nominee");
       return;
     } else {
       // console.log(formData);
@@ -206,8 +215,8 @@ function AddUser() {
         alert("Error occured, please reload the page");
         window.location.reload();
       } else {
-        alert("File added successfully");
         Index = await handleStorePerson(Encid);
+        alert("File added successfully");
         const newIndex = parseInt(Index._hex, 16);
         await UpdateIndex(UID, newIndex);
         // setEncid("3");
@@ -249,11 +258,21 @@ function AddUser() {
           />
         </div>
         <div>
-          <label>Password for document:</label>
+          <label>Password for CreatorKey:</label>
           <input
             type="password"
-            name="password"
-            value={formData.password}
+            name="passwordc"
+            value={formData.passwordc}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div>
+          <label>Confirm Password for CreatorKey:</label>
+          <input
+            type="password"
+            name="CreconfirmPassword"
+            value={formData.CreconfirmPassword}
             onChange={handleChange}
             required
           />
@@ -281,6 +300,26 @@ function AddUser() {
               required
             />
           </div>
+        </div>
+        <div>
+          <label>Password for NomineeKey:</label>
+          <input
+            type="password"
+            name="passwordn"
+            value={formData.passwordn}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div>
+          <label>Confirm Password for NomineeKey:</label>
+          <input
+            type="password"
+            name="NomconfirmPassword"
+            value={formData.NomconfirmPassword}
+            onChange={handleChange}
+            required
+          />
         </div>
         <div>
           <label>Upload PDF File:</label>

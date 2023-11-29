@@ -26,16 +26,12 @@ function DownloadKeys() {
   };
 
   return (
-    <div>
+    <div style={{ padding: '20px' }}>
       <h2>Download Keys</h2>
-      <div>
+      <div style={{ textAlign: 'left' }}>
         <h3>Private Keys</h3>
         <button onClick={handleDownloadCreatorKey}>Download</button>
       </div>
-      {/* <div>
-        <h3>Nominee's Private Key</h3>
-        <button onClick={handleDownloadNomineeKey}>Download</button>
-      </div> */}
     </div>
   );
 }

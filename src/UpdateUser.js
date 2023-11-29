@@ -139,8 +139,8 @@ function UpdateUser() {
         alert("Incorrect Password, Retry again");
         Navigate("/update-user");
       } else {
-        alert("File added successfully");
         const Index = await handleStorePerson(reply);
+        alert("File added successfully");
         const newIndex = parseInt(Index._hex, 16);
         await UpdateIndex(UID, newIndex);
         Navigate("/app");

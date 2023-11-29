@@ -104,6 +104,9 @@ function Retrieve() {
     } else if (formData.UIDc.length != 12 || formData.UIDn.length != 12) {
       alert("Creator and Nominee ID should be exactly 12 Integers long");
       return;
+    } else if (formData.password.length < 8) {
+      alert("Password should be atleast 8 characters");
+      return;
     } else {
       let reply = await RetrieveWill(
         file,
@@ -119,6 +122,9 @@ function Retrieve() {
       } else if (reply === "Wrong UIDn") {
         alert("UIDn is invalid, check your UIDn");
         return;
+      } else if (reply === "Wrong Password") {
+        alert("Incorrect Password, Retry again");
+        Navigate("/retrieve");
       } else {
         // console.log(formData);
         // console.log(UID);
@@ -153,6 +159,16 @@ function Retrieve() {
             type="number"
             name="UIDn"
             value={formData.UIDn}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div>
+          <label>Password for the Document:</label>
+          <input
+            type="password"
+            name="password"
+            value={formData.password}
             onChange={handleChange}
             required
           />

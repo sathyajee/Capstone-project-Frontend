@@ -18,7 +18,7 @@ function DownloadWill() {
   };
 
   return (
-    <div>
+    <div style={{ padding: '20px' }}>
       <h2>Download Will</h2>
       <p>Downloadable format of the will:</p>
       <button onClick={handleDownload}>Download</button>
